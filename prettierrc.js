@@ -1,0 +1,3 @@
+module.exports = {
+  trailingComm: false,
+};
