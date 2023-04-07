@@ -1,4 +1,13 @@
 <template>
+  <v-popup v-if="isInfoPopupVisible" @closePopup="closeInfoPopup">
+    <div>
+      <p class="info__text">{{ name }}</p>
+      <p class="info__text">{{ lastName }}</p>
+      <p class="info__text">{{ email }}</p>
+      <p class="info__text">{{ phone }}</p>
+      <button @click="handleDelete(t)" class="button btn-centr">Delete</button>
+    </div>
+  </v-popup>
   <nav class="header">
     <div class="container header__wrap">
       <h1 class="header__logo">Dashboard</h1>
@@ -51,31 +60,43 @@
               class="wrap__form-inp"
             />
           </div>
-          <button @click="add" class="button btn">Add</button>
+          <button @click="add" class="button black">Add</button>
         </div>
         <div class="wrap__input">
           <input v-model="filter" placeholder="Filter" class="wrap__form-inp" />
         </div>
       </div>
       <template v-if="tickers.length > 0">
-        <div class="info__card">
-          <div v-for="t in filteredTickers()" :key="t.name" class="info__item">
-            <div class="info__text">{{ t.name }}</div>
-            <div class="info__text">{{ t.lastName }}</div>
-            <div class="info__text">{{ t.email }}</div>
-            <div class="info__text">{{ t.phone }}</div>
-            <button @click="handleDelete(t)" class="button info__btn">
-              Delete
-            </button>
-          </div>
-          <div class="test__pag">
-            <button v-if="page > 1" @click="page = page - 1" class="button btn">
+        <div class="info">
+          <ul class="info__card">
+            <li v-for="t in filteredTickers()" :key="t.name" class="info__item">
+              <p class="info__text">{{ t.name }}</p>
+              <p class="info__text">{{ t.lastName }}</p>
+              <p class="info__text">{{ t.email }}</p>
+              <p class="info__text">{{ t.phone }}</p>
+              <button @click="handleDelete(t)" class="button red btn-centr">
+                Delete
+              </button>
+              <button
+                @click="showPopupInfo"
+                class="button black btn-centr-centr"
+              >
+                Show info
+              </button>
+            </li>
+          </ul>
+          <div class="info__pag">
+            <button
+              v-if="page > 1"
+              @click="page = page - 1"
+              class="button black"
+            >
               Previous
             </button>
             <button
               v-if="hasNextPage"
               @click="page = page + 1"
-              class="button btn"
+              class="button black"
             >
               Next
             </button>
@@ -87,10 +108,23 @@
 </template>
 
 <script>
+import vPopup from "./components/popup.vue";
 export default {
   name: "App",
+  props: {
+    cart_item_data: {
+      type: Object,
+      default() {
+        return {};
+      },
+    },
+  },
+  components: {
+    vPopup,
+  },
   data() {
     return {
+      isInfoPopupVisible: false,
       ticker: "",
       lastName: "",
       email: "",
@@ -100,49 +134,49 @@ export default {
           name: "Vladislav",
           lastName: "Ryabov",
           email: "ryabov.it@gmail.com",
-          phone: "+380508444679",
+          phone: "+380508064679",
         },
         {
-          name: "Vladislav",
-          lastName: "Ryabov",
-          email: "ryabov.it@gmail.com",
-          phone: "+380508444679",
+          name: "Andry",
+          lastName: "Myers",
+          email: "andrymyers@gmail.com",
+          phone: "+380668444679",
         },
         {
-          name: "Vladislav",
-          lastName: "Ryabov",
-          email: "ryabov.it@gmail.com",
-          phone: "+380508444679",
+          name: "Lauren",
+          lastName: "Clark",
+          email: "lauren.it@gmail.com",
+          phone: "+380502844679",
         },
         {
-          name: "Vladislav",
-          lastName: "Ryabov",
-          email: "ryabov.it@gmail.com",
-          phone: "+380508444679",
+          name: "Carolyn",
+          lastName: "Green",
+          email: "green@gmail.com",
+          phone: "+380508444789",
         },
         {
-          name: "Vladislav",
-          lastName: "Ryabov",
-          email: "ryabov.it@gmail.com",
-          phone: "+380508444679",
+          name: "Arthur",
+          lastName: "White",
+          email: "arthur@gmail.com",
+          phone: "+380508445679",
         },
         {
-          name: "Vladislav",
-          lastName: "Ryabov",
-          email: "ryabov.it@gmail.com",
-          phone: "+380508444679",
+          name: "Anna",
+          lastName: "Thompson",
+          email: "thompson.it@gmail.com",
+          phone: "+380508454679",
         },
         {
-          name: "Vladislav",
-          lastName: "Ryabov",
-          email: "ryabov.it@gmail.com",
-          phone: "+380508444679",
+          name: "Brittany",
+          lastName: "Newman",
+          email: "brittany@gmail.com",
+          phone: "+380523444679",
         },
         {
-          name: "Vladislav",
-          lastName: "Ryabov",
-          email: "ryabov.it@gmail.com",
-          phone: "+380508444679",
+          name: "Roy",
+          lastName: "Long",
+          email: "roy.long@gmail.com",
+          phone: "+380512444679",
         },
       ],
       page: 1,
@@ -164,6 +198,12 @@ export default {
     }
   },
   methods: {
+    showPopupInfo() {
+      this.isInfoPopupVisible = true;
+    },
+    closeInfoPopup() {
+      this.isInfoPopupVisible = false;
+    },
     filteredTickers() {
       const start = (this.page - 1) * 6;
       const end = this.page * 6;
@@ -212,7 +252,7 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss">
 @import url("https://fonts.googleapis.com/css2?family=Acme&family=Roboto:wght@300;400;700&display=swap");
 body {
   background: rgba(239, 239, 239, 0.729);
@@ -249,41 +289,50 @@ button:focus,
 button:active {
   outline: none;
 }
+
 .container {
   max-width: 1400px;
   margin: auto;
 }
-.header {
-  background-color: #353535;
-}
+
 @media screen and (max-width: 1420px) {
   .wrapper {
     padding: 0 10px;
   }
-  .header__wrap {
-    padding: 10px 10px !important;
+}
+
+.header {
+  background-color: #353535;
+  &__wrap {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+
+    @media screen and (max-width: 1420px) {
+      padding: 10px 10px !important;
+    }
+  }
+  &__logo {
+    font-family: "Acme";
+    font-weight: 400;
+    font-size: 30px;
+    color: white;
+    margin: 0;
+  }
+  &__link {
+    font-family: "Roboto";
+    font-weight: 300;
+    margin-left: 20px;
+    color: white;
+    font-size: 15px;
+
+    @media screen and (max-width: 750px) {
+      font-size: 12px;
+    }
   }
 }
-.header__wrap {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 0;
-}
-.header__logo {
-  font-family: "Acme";
-  font-weight: 400;
-  font-size: 30px;
-  color: white;
-  margin: 0;
-}
-.header__link {
-  font-family: "Roboto";
-  font-weight: 300;
-  margin-left: 20px;
-  color: white;
-  font-size: 20px;
-}
+
 .wrap {
   display: flex;
   justify-content: space-around;
@@ -293,83 +342,102 @@ button:active {
   margin-top: 20px;
   border-radius: 5px;
   align-items: center;
-}
-@media screen and (max-width: 900px) {
-  .wrap {
+
+  @media screen and (max-width: 900px) {
     flex-direction: column;
     gap: 20px;
   }
-}
-.wrap__form {
-  display: flex;
-  gap: 30px;
-  align-items: center;
-}
-@media screen and (max-width: 750px) {
-  .wrap__form {
-    flex-direction: column;
-  }
-  .header__link {
+
+  &__form-title {
+    font-family: "Roboto";
+    font-weight: 400;
     font-size: 15px;
+    margin: 0;
   }
-  .wrap__form-inp {
-    width: 270px;
-  }
-}
-.wrap__form-title {
-  font-family: "Roboto";
-  font-weight: 400;
-  font-size: 15px;
-  margin: 0;
-}
-.wrap__input {
-  display: flex;
-  gap: 20px;
-  align-items: center;
-}
-.wrap__input-title {
-  font-family: "Roboto";
-  font-weight: 400;
-  font-size: 15px;
-}
-.wrap__form-inp {
-  border: none;
-  padding: 5px;
-  border-radius: 4px;
-}
-.info__item {
-  display: flex;
-  justify-content: space-around;
-  padding: 20px 0;
-  background: rgb(250, 250, 250);
-  margin-bottom: 5px;
-  border-radius: 5px;
-}
-@media screen and (max-width: 750px) {
-  .info__item {
-    flex-direction: column;
-    gap: 10px;
+  &__input {
+    display: flex;
+    gap: 20px;
     align-items: center;
   }
-  .info__text {
-    margin-left: 0px !important;
+  &__input-title {
+    font-family: "Roboto";
+    font-weight: 400;
+    font-size: 15px;
+  }
+  &__form-inp {
+    border: none;
+    padding: 5px;
+    border-radius: 4px;
+
+    @media screen and (max-width: 800px) {
+      width: 270px;
+    }
+  }
+  &__form {
+    display: flex;
+    gap: 30px;
+    align-items: center;
+
+    @media screen and (max-width: 800px) {
+      flex-direction: column;
+    }
   }
 }
-.info__item:hover {
-  box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.5);
-  background: white;
+
+.info {
+  &__item {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    padding: 10px 0;
+    background: rgb(250, 250, 250);
+    margin-bottom: 5px;
+    border-radius: 5px;
+    align-items: center;
+
+    @media screen and (max-width: 800px) {
+      grid: none;
+      gap: 10px;
+      align-items: center;
+    }
+  }
+  &__item:hover {
+    box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.5);
+    background: white;
+  }
+  &__text {
+    font-family: "Roboto";
+    font-weight: 300;
+    // margin-left: 20px;
+    font-size: 15px;
+    justify-self: center;
+
+    // @media screen and (max-width: 750px) {
+    //   margin-left: 0px !important;
+    // }
+  }
+  &__pag {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
 }
-.info__text {
-  font-family: "Roboto";
-  font-weight: 300;
-  margin-left: 20px;
-  font-size: 15px;
+
+.btn-centr {
+  justify-self: end;
+  margin-right: 15px;
+
+  @media screen and (max-width: 800px) {
+    justify-self: center;
+    margin-right: 0px;
+  }
 }
-.test__pag {
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
+
+.btn-centr-centr {
+  @media screen and (max-width: 800px) {
+    justify-self: center;
+  }
 }
+
 .button {
   border: none;
   border-radius: 5px;
@@ -380,12 +448,24 @@ button:active {
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  padding: 4px 20px;
+  width: 100px;
+  height: 22px;
+}
+.black {
   background-color: #353535;
   border: 1px solid #353535;
   color: white;
 }
-.button:hover {
+.black:hover {
+  background-color: white;
+  color: #353535;
+}
+.red {
+  background-color: #d300008c;
+  border: 1px solid #d300008c;
+  color: white;
+}
+.red:hover {
   background-color: white;
   color: #353535;
 }
